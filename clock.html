@@ -1,0 +1,101 @@
+﻿<html>
+	<head>
+		<style>
+		    /* defaults */
+			html, body {
+					background-color: RGB(0, 32, 64);
+					color: white;
+					height: 100vh; 
+					width: 100vw; 
+					margin: 0; 
+					padding: 0;
+				}			
+			/* SVG default strokes and fills */
+			svg {
+					stroke: black;
+					stroke-width: 50;
+					fill: RGB(128, 160, 192);
+				}
+				
+			/* flex app-style look */
+			#root {
+					display: flex;
+					flex-flow: column;
+					height: 100vh;
+					width: 100vw;
+			}				
+			#root #hdr {
+					flex: 0;
+				}
+			#root #bdy { 
+					flex: 1;
+					overflow: auto;
+				}
+			#root #ftr {
+					flex: 0;
+					text-align: right;
+					color: RGB(128, 160, 192);
+				}
+				
+		</style>
+	</head>
+	
+	<body>
+		<div id=root>
+			<div id=hdr>
+				SVG vs. JS Example
+			</div>
+			<div id=bdy>
+				<svg id=pic1 viewBox="-1000 -1000 2000 2000"></svg>
+			</div>
+			<div id=ftr>
+				(!c) 2018 GB
+			</div>
+		</div>
+	</body>
+	
+	<script>
+	
+		function svgDraw(parent, elementName, attributes) {
+			let c = document.createElementNS('http://www.w3.org/2000/svg', elementName);
+			for (let [a, v] of attributes)
+				c.setAttribute(a, v);
+			parent.appendChild(c);
+			return c;
+		}
+	
+		// note: the default SVG stroke and fill styles are already defined in CSS
+		const pic1 = document.getElementById('pic1');
+		// clock face:
+		svgDraw(pic1, 'circle', [ ['cx', 0], ['cy', 0], ['r', 700] ]);		
+		// hour marks:
+		for (let i = 0; i < 12; i++) 
+			svgDraw(pic1, 'circle', [ 
+					['cx', 630 * Math.sin(i / 12 * Math.PI * 2)],
+					['cy', 630 * Math.cos(i / 12 * Math.PI * 2)],
+					['r', 20],
+					['stroke-width', 0],
+					['fill', 'black'],
+				]);
+		// hands:
+		const hourHand = svgDraw(pic1, 'line', [ ['x1', 0], ['y1', 0], ['x2', -200], ['y2', 200] ]);		
+		const minuteHand = svgDraw(pic1, 'line', [ ]);	// don't care where it's put, the timer will fix its position
+		const secondHand = svgDraw(pic1, 'line', [ ['stroke-width', 10] ]);		
+		
+		// animate hands
+		setInterval( function() {		
+			function updateHand(hand, angle, handLength) {
+				hand.setAttribute('x1', -100 * Math.sin(angle) );
+				hand.setAttribute('y1', 100 * Math.cos(angle) );
+				hand.setAttribute('x2', handLength * Math.sin(angle) );
+				hand.setAttribute('y2', -handLength * Math.cos(angle) );
+			}			
+			const dt = new Date();
+			updateHand(hourHand, (dt.getHours() + dt.getMinutes() / 60) / 12 * 2 * Math.PI, 400);
+			updateHand(minuteHand, (dt.getMinutes() + dt.getSeconds() / 60) / 60 * 2 * Math.PI, 600);
+			updateHand(secondHand, (dt.getSeconds() + dt.getMilliseconds() / 1000) / 60 * 2 * Math.PI, 600);
+		}, 50);
+		
+	</script>
+	
+</html>
