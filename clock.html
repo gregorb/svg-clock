@@ -16,6 +16,12 @@
 					stroke-width: 50;
 					fill: RGB(128, 160, 192);
 				}
+            svg text {
+                font-size: 200;
+				text-align: center;
+				stroke-width: 0;
+				fill: black;
+              }
 				
 			/* flex app-style look */
 			#root {
@@ -70,13 +76,12 @@
 		svgDraw(pic1, 'circle', [ ['cx', 0], ['cy', 0], ['r', 700] ]);		
 		// hour marks:
 		for (let i = 0; i < 12; i++) 
-			svgDraw(pic1, 'circle', [ 
-					['cx', 630 * Math.sin(i / 12 * Math.PI * 2)],
-					['cy', 630 * Math.cos(i / 12 * Math.PI * 2)],
-					['r', 20],
-					['stroke-width', 0],
-					['fill', 'black'],
-				]);
+			svgDraw(pic1, 'text', [ 
+					['x', 580 * Math.sin(i / 12 * Math.PI * 2)],
+					['y', -560 * Math.cos(i / 12 * Math.PI * 2)],
+					['dy', '65'],
+					['text-anchor', 'middle'],
+				]).innerHTML = (i ? i : 12);
 		// hands:
 		const hourHand = svgDraw(pic1, 'line', [ ['x1', 0], ['y1', 0], ['x2', -200], ['y2', 200] ]);		
 		const minuteHand = svgDraw(pic1, 'line', [ ]);	// don't care where it's put, the timer will fix its position
